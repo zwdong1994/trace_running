@@ -567,7 +567,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
             exit(0);
         }
 
-        trace[i].blkno = address;
+        trace[i].blkno = 8 * (address/8);
 
 
 #if 0
