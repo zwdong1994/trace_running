@@ -122,7 +122,7 @@ double rangescale;
 //unsigned long rangescale;
 double trace_end_time = 0;
 int trace_type = 0;
-int schemes_type = 0;
+int schemes_type = -1;
 
 unsigned long write_num = 0;
 unsigned long read_num = 0;
@@ -399,25 +399,7 @@ int main(int argc, char **argv) {
     sleep(5);
     unsigned long j;
 
-    if (schemes_type == 0) { // Traditional deduplication.
-        for (j = 0; j < total; j++) {
-            if (my_time[j].end_time > 0) {
-                my_time[j].end_time = my_time[j].end_time + 0.013828 / 1000;
-                //my_time[j].elpsd_time = my_time[j].end_time - my_time[j].start_time;
-            }
-            my_time[j].elpsd_time = my_time[j].elpsd_time + 0.013828 / 1000;
-        }
-/*    } else if(schemes_type == 2){ // Sampling deduplication.
-        for( j = 0; j < total; j++){
-            if(my_time[j].end_time > 0) {
-                my_time[j].end_time = my_time[j].end_time + 0.003 / 1000;
-                //my_time[j].elpsd_time = my_time[j].end_time - my_time[j].start_time;
-            }
-            my_time[j].elpsd_time = my_time[j].elpsd_time + 0.003 / 1000;
-        }
-*/    } else {
 
-    }
 
     for (i = 0; i < total; i++) {
         total_size += trace[i].blkcount * BLOCK_SIZE;
@@ -744,7 +726,7 @@ void do_io() {
     i = 0;
     start = get_time();
     while (i < total && *exit_code == 10) {
-        if (schemes_type == 0) //Traditional deduplication schemes
+        /*if (schemes_type == 0) //Traditional deduplication schemes
             mid_str = trace[i].fingerprint;
         else if (schemes_type == 1) //EaD
             mid_str = trace[i].bchcode;
@@ -756,7 +738,7 @@ void do_io() {
         } else {
             printf("Error schems type!\n");
             exit(0);
-        }
+        }*/
         temp_time = get_time() - start + add_time;
         if (temp_time < trace[i].time) {
             if (trace[i].time - temp_time > 0.5) {
