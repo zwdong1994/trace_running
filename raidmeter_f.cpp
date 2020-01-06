@@ -469,6 +469,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
     char fingerprint[300];
     uint8_t hv[CODE_LENGTH + 1];
 
+    int first = 1;
 ////////////////////////////////////////////////////////////////////////////////
     if ((fp = fopen(file_name, "r")) == NULL) {
         cout << "open trace file error:" << file_name << "can't open!" << endl;
@@ -489,7 +490,11 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
                 exit(0);
             }
             timestamp = atof(time_str);
-            trace[i].time = timestamp;
+            if(first) {
+                delete_time = time_stamp;
+                first = 0;
+            }
+            trace[i].time = timestamp - delete_time;
             trace[i].time = trace[i].time / timescale;
             trace[i].blkcount = (int) (length / BLOCK_SIZE);
             if (trace[i].blkcount > MAX_BLOCK)
@@ -828,7 +833,8 @@ void do_io() {
                 aio_read64(&my_aiocb[i]);
                 my_time[i].flag = 0;
             }
-            i++;debug4("time:", temp_time, "send req:", i - 1);
+            i++;
+            debug4("time:", temp_time, "send req:", i - 1);
         }
     }
     total = i - 1;
