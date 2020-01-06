@@ -106,6 +106,7 @@ sig_data my_data[MAX_TRACE_COUNT];
 io_trace trace[MAX_TRACE_COUNT];
 io_time my_time[MAX_TRACE_COUNT];
 static unsigned long total = 0;
+static unsigned long processed_total = 0;
 static double start = 0;
 char *exit_code;
 
@@ -654,6 +655,7 @@ void aio_complete_note(int signo, siginfo_t *info, void *context) {
         /* Did the request complete? */
         if (aio_error64(req->aio_req) == 0) {
             /* Request completed successfully, get the return status */
+            processed_total ++;
             ret = aio_return64(req->aio_req);
             my_time[req->number].end_time = get_time() - start + my_time[req->number].move_time;
             if (my_time[req->number].hash_flag == 1)
@@ -746,7 +748,7 @@ void do_io() {
         }*/
         temp_time = get_time() - start + add_time;
         if (temp_time < trace[i].time) {
-            if (trace[i].time - temp_time > 0.5) {
+            if (trace[i].time - temp_time > 0.2) {
                 add_time = trace[i].time - temp_time - 0.1 + add_time;
 
             }
@@ -820,6 +822,7 @@ void do_io() {
                         exit(0);
                     }
                 } else if (trace_type == 0) {
+                    my_time[i].start_time = temp_time;
                     my_time[i].move_time = add_time;
                     aio_write64(&my_aiocb[i]);
                     my_time[i].flag = 1;
@@ -829,6 +832,7 @@ void do_io() {
                 }
             } else {
                 read_num ++;
+                my_time[i].start_time = temp_time;
                 my_time[i].move_time = add_time;
                 aio_read64(&my_aiocb[i]);
                 my_time[i].flag = 0;
