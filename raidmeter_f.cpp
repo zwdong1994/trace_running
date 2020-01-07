@@ -376,7 +376,7 @@ int main(int argc, char **argv) {
     //read trace file amd converte the trace adative to the raid capacity and intensity
     //!!! rangescale needs to be re-implemented, it is not suitable now!
     //rangescale= (float)max_trace_addr /(dev_size * 1024 * 1024 *2) * 1.0;
-    rangescale = (float) dev_size * 2 / max_trace_addr;
+    rangescale = (float) dev_size * 4096 / max_trace_addr;
 
     // cout<<"max"<<max_trace_addr;
     cout << "rangescale:" << rangescale;
@@ -495,6 +495,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
                 delete_time = time_stamp;
                 first = 0;
             }
+            trace[i].blkno = address;
             trace[i].time = timestamp - delete_time;
             trace[i].time = trace[i].time / timescale;
             trace[i].blkcount = (int) (length / BLOCK_SIZE);
@@ -555,7 +556,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
             exit(0);
         }
 
-        trace[i].blkno = 8 * (address/8);
+
 
 
 #if 0
@@ -615,7 +616,7 @@ int trace_reader() {
     int i = 0;
     for (; i < total; i++) {
         trace[i].blkno = (unsigned long) (trace[i].blkno * rangescale);
-        trace[i].blkno = (trace[i].blkno / 8) * 8;
+        trace[i].blkno = (trace[i].blkno / 512) * 512;
     }
     return i;
 }
@@ -697,7 +698,7 @@ void do_io() {
         my_aiocb[i].aio_fildes = fd;
         my_aiocb[i].aio_buf = myaio.aio_buf;
         my_aiocb[i].aio_nbytes = trace[i].blkcount * BLOCK_SIZE;
-        my_aiocb[i].aio_offset = trace[i].blkno * BLOCK_SIZE;
+        my_aiocb[i].aio_offset = trace[i].blkno;
 
         if (my_aiocb[i].aio_offset > dev_size * 1024) {
             std::cout << "Error address!" << std::endl;
