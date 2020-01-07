@@ -72,6 +72,7 @@ typedef struct _io_time {
     double move_time;
     unsigned int flag;
     int hash_flag;
+    int finish;
 } io_time;
 
 //signal
@@ -403,13 +404,16 @@ int main(int argc, char **argv) {
 
 
     for (i = 0; i < total; i++) {
-        total_size += trace[i].blkcount * BLOCK_SIZE;
-        total_time += my_time[i].elpsd_time;
+        if(my_time[i].finish){
+            total_size += trace[i].blkcount * BLOCK_SIZE;
+            total_time += my_time[i].elpsd_time;
+            processed_total ++;
+        }
     }
 
     cout << total << " requests sent" << "(" << total_size / 1024 << "MB)" << endl;
 //	cout<<"speed:  "<<total_size/1024/my_time[total].end_time<<" KB/s"<<endl;
-    cout << "avg response time:" << total_time / total * 1000 << " ms" << endl;
+    cout << "avg response time:" << total_time / processed_total * 1000 << " ms" << endl;
 
     deal_by_time();
     deal_by_num();
@@ -569,6 +573,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
 
 
         my_time[i].hash_flag = 0;
+        my_time[i].finish = 0;
 
         total_count++;
         count_threshold--;
@@ -655,7 +660,7 @@ void aio_complete_note(int signo, siginfo_t *info, void *context) {
         /* Did the request complete? */
         if (aio_error64(req->aio_req) == 0) {
             /* Request completed successfully, get the return status */
-            processed_total ++;
+            my_time[req->number].finish = 1;
             ret = aio_return64(req->aio_req);
             my_time[req->number].end_time = get_time() - start + my_time[req->number].move_time;
             my_time[req->number].elpsd_time = my_time[req->number].end_time - my_time[req->number].start_time;
