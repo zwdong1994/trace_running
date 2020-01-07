@@ -132,6 +132,8 @@ unsigned long io_num = 0;
 unsigned long no_replicate = 0;
 
 unsigned long max_trace_addr;
+double total_size = 0;
+double total_time = 0;
 
 int main(int argc, char **argv) {
     int i = 0;
@@ -396,8 +398,7 @@ int main(int argc, char **argv) {
         exit(0);
     }
     do_io();
-    double total_size = 0;
-    double total_time = 0;
+
     sleep(5);
     unsigned long j;
 
@@ -960,7 +961,7 @@ void deal_by_num() {
                 (int) (block_count[i] * BLOCK_SIZE / 1024.0 / time_temp));
 
     }
-    fprintf(fp, "avg response time: %lf ms.\n", total_time / total * 1000);
+    fprintf(fp, "avg response time: %lf ms.\n", total_time / processed_total * 1000);
     fprintf(fp, "Read number is: %lu, write number is: %lu, total io number is: %lu\n", read_num, write_num, io_num);
     fprintf(fp, "Read ratio is: %lf %%.\n", 100.0 * read_num / io_num);
     fclose(fp);
