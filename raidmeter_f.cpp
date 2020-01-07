@@ -492,6 +492,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
             }
             timestamp = atof(time_str);
             if(first) {
+                start_timestamp = timestamp;
                 delete_time = time_stamp;
                 first = 0;
             }
@@ -572,10 +573,8 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
         total_count++;
         count_threshold--;
 
-        if (total_count == 1)
-            start_timestamp = trace[i].time;
 
-        end_timestamp = trace[i].time;
+        end_timestamp = timestamp;
 
         if (op_code == 'R' || op_code == 'r') {
             read_count++;
