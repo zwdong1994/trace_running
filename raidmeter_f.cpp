@@ -700,7 +700,7 @@ void do_io() {
         my_aiocb[i].aio_nbytes = trace[i].blkcount * BLOCK_SIZE;
         my_aiocb[i].aio_offset = trace[i].blkno;
 
-        if (my_aiocb[i].aio_offset > dev_size * 1024) {
+        if (my_aiocb[i].aio_offset > dev_size * 4096) {
             std::cout << "Error address!" << std::endl;
         }
 
