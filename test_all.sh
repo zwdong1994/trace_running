@@ -20,4 +20,4 @@ sudo bash single_evaluation.sh tracetype=0 tracename=traces/rsrch_0.txt resultna
 
 sudo bash single_evaluation.sh tracetype=0 tracename=traces/wdev_0.txt resultname=wdev_0.sample capacity=8 devicename=/dev/nvme0n1
 
-
+sudo bash single_evaluation.sh tracetype=0 tracename=traces/mds_0.txt resultname=mds_0.sample capacity=8 devicename=/dev/nvme0n1

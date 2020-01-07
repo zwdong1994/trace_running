@@ -498,7 +498,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
             trace[i].blkno = address;
             trace[i].time = timestamp - delete_time;
             trace[i].time = trace[i].time / timescale;
-            trace[i].blkcount = (int) (length / BLOCK_SIZE);
+            trace[i].blkcount = (unsigned int) (length / BLOCK_SIZE);
             if (trace[i].blkcount > MAX_BLOCK)
                 trace[i].blkcount = MAX_BLOCK;
         } else if (trace_type == 1 || trace_type == 2) { // FIU trace, 1 is homes, 2 are mail or web.
@@ -588,8 +588,8 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
         if (length / BLOCK_SIZE > MAX_BLOCK)
             length = BLOCK_SIZE * MAX_BLOCK;
 
-        if (address + length / BLOCK_SIZE > max_address) {
-            max_address = address + length / BLOCK_SIZE;
+        if (address + length > max_address) {
+            max_address = address + length;
         }
         i++;
     }
@@ -603,7 +603,7 @@ unsigned long trace_stat(char *file_name, unsigned long *max_dev_addr) {
     }
 
     *max_dev_addr = max_address;
-    printf("max_address=%ld, total_count=%ld(iops=%lf), read_count=%ld(%lf%%), write_count=%ld(%lf%%)\n\n",
+    printf(" max_address=%ld, total_count=%ld(iops=%lf), read_count=%ld(%lf%%), write_count=%ld(%lf%%)\n\n",
            max_address, total_count, io_per_sec * timescale, read_count, read_prop * 100, write_count,
            (1 - read_prop) * 100);
     fclose(fp);
@@ -659,8 +659,6 @@ void aio_complete_note(int signo, siginfo_t *info, void *context) {
             processed_total ++;
             ret = aio_return64(req->aio_req);
             my_time[req->number].end_time = get_time() - start + my_time[req->number].move_time;
-            if (my_time[req->number].hash_flag == 1)
-                my_time[req->number].end_time = my_time[req->number].end_time + (0.013828 / 1000);
             my_time[req->number].elpsd_time = my_time[req->number].end_time - my_time[req->number].start_time;
 //		printf("--we get here--used time =%lf---\n",my_time[req->number].elpsd_time);
         }
