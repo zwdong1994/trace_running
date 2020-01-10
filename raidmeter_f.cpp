@@ -830,6 +830,7 @@ void do_io() {
                     my_time[i].move_time = add_time;
                     pwrite(fd, myaio.buf, my_aiocb[i].aio_nbytes, my_aiocb[i].aio_offset);
 //                    aio_write64(&my_aiocb[i]);
+                    my_time[i].finish = 1;
                     my_time[i].end_time = get_time() - start + add_time;
                     my_time[i].elpsd_time = my_time[i].end_time - my_time[i].start_time;
                     my_time[i].flag = 1;
@@ -843,6 +844,7 @@ void do_io() {
                 my_time[i].move_time = add_time;
                 pread(fd, myaio.buf, my_aiocb[i].aio_nbytes, my_aiocb[i].aio_offset);
 //                aio_read64(&my_aiocb[i]);
+                my_time[i].finish = 1;
                 my_time[i].end_time = get_time() - start + add_time;
                 my_time[i].elpsd_time = my_time[i].end_time - my_time[i].start_time;
                 my_time[i].flag = 0;
