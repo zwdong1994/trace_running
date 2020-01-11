@@ -414,7 +414,7 @@ int main(int argc, char **argv) {
 
     cout << total << " requests sent" << "(" << total_size / 1024 << "MB)" << endl;
 //	cout<<"speed:  "<<total_size/1024/my_time[total].end_time<<" KB/s"<<endl;
-    cout << "avg response time:" << total_time / processed_total * 1000 << " ms" << endl;
+    cout << "avg response time:" << total_time / total * 1000 << " ms" << endl;
 
     deal_by_time();
     deal_by_num();
@@ -828,11 +828,7 @@ void do_io() {
                 } else if (trace_type == 0) {
                     my_time[i].start_time = temp_time;
                     my_time[i].move_time = add_time;
-                    pwrite(fd, myaio.buf, my_aiocb[i].aio_nbytes, my_aiocb[i].aio_offset);
-//                    aio_write64(&my_aiocb[i]);
-                    my_time[i].finish = 1;
-                    my_time[i].end_time = get_time() - start + add_time;
-                    my_time[i].elpsd_time = my_time[i].end_time - my_time[i].start_time;
+                    aio_write64(&my_aiocb[i]);
                     my_time[i].flag = 1;
                 } else {
                     printf("Error trace type!\n");
@@ -842,11 +838,7 @@ void do_io() {
                 read_num ++;
                 my_time[i].start_time = temp_time;
                 my_time[i].move_time = add_time;
-                pread(fd, myaio.buf, my_aiocb[i].aio_nbytes, my_aiocb[i].aio_offset);
-//                aio_read64(&my_aiocb[i]);
-                my_time[i].finish = 1;
-                my_time[i].end_time = get_time() - start + add_time;
-                my_time[i].elpsd_time = my_time[i].end_time - my_time[i].start_time;
+                aio_read64(&my_aiocb[i]);
                 my_time[i].flag = 0;
             }
             i++;
